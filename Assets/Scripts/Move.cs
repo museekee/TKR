@@ -49,7 +49,8 @@ public class Move : MonoBehaviour
             rb.MovePosition(
                 transform.position + transform.forward * v * Speed
             );
-            ExeedGaugeImage.fillAmount = ExeedGauge;
+            if (ExeedGauge > 1f) ExeedGauge = 1f;
+            else ExeedGaugeImage.fillAmount = ExeedGauge;
         }
         NowSpeed = (
             (
@@ -62,11 +63,14 @@ public class Move : MonoBehaviour
     private async Task Exeed() {
         if (OnExeed) return;
         OnExeed = true;
-        for (int i = 0; i < ExeedGaugeImage.fillAmount*1000; i++) {
+        while (true) {
+            if (ExeedGaugeImage.fillAmount == 0f) {
+                OnExeed = false;
+                return;
+            }
             ExeedGaugeImage.fillAmount -= 0.001f;
             ExeedGauge -= 0.001f;
             await Task.Delay(1);
         }
-        OnExeed = false;
     }
 }
