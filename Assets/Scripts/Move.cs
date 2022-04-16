@@ -7,25 +7,30 @@ using UnityEngine.UI;
 
 public class Move : MonoBehaviour
 {
-    [SerializeField] public float Speed = 1f; // 일반
-    [SerializeField] public float ExSpeed = 2f; // 익시드
-    [SerializeField] public float rotateSpeed = 0.5f; // 회전 속도
+    [Header ("카트바디 성능")]
+    public float Speed = 1f; // 일반
+    public float ExSpeed = 2f; // 익시드
+    public float rotateSpeed = 0.5f; // 회전 속도
+    [Range (0f, 1f)] public float ExeedGauge = 0f;
+    [Header ("게임 오브젝트")]
+    public Text SpeedText;
+    public Image ExeedGaugeImage;
 
     #region 주행 관련 전역변수
     private bool OnExeed = false;
     private double NowSpeed = 0;
     #endregion
     private Rigidbody rb;
-    private Text SpeedText;
     private Vector3 oldPosition;
 
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
-        SpeedText = GameObject.Find("Speed").GetComponent<Text>();
     }
-
-    private async void FixedUpdate() {
+    private async void Update() {
+        if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.Space)) await Exeed();
+    }
+    private void FixedUpdate() {
         float h = Input.GetAxis("Horizontal");
         float v = -Input.GetAxis("Vertical");
 
@@ -36,13 +41,16 @@ public class Move : MonoBehaviour
         // if (vel.magnitude < Speed) {
         //     rb.velocity = vel.normalized * Speed;
         // }
-        if (Input.GetKeyDown(KeyCode.Space)) await Exeed();
+        if (v != 0f && !OnExeed) ExeedGauge += 0.001f;
         if (OnExeed) rb.MovePosition(
             transform.position + transform.forward * v * ExSpeed
         );
-        else rb.MovePosition(
-            transform.position + transform.forward * v * Speed
-        );
+        else {
+            rb.MovePosition(
+                transform.position + transform.forward * v * Speed
+            );
+            ExeedGaugeImage.fillAmount = ExeedGauge;
+        }
         NowSpeed = (
             (
                 (transform.position - oldPosition).magnitude)
@@ -52,10 +60,13 @@ public class Move : MonoBehaviour
         oldPosition = transform.position;
     }
     private async Task Exeed() {
-        Debug.Log("안녕1");
         if (OnExeed) return;
         OnExeed = true;
-        await Task.Delay(1000);
+        for (int i = 0; i < ExeedGaugeImage.fillAmount*1000; i++) {
+            ExeedGaugeImage.fillAmount -= 0.001f;
+            ExeedGauge -= 0.001f;
+            await Task.Delay(1);
+        }
         OnExeed = false;
     }
 }
