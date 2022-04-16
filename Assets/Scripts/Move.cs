@@ -8,8 +8,10 @@ using UnityEngine.UI;
 public class Move : MonoBehaviour
 {
     [Header ("카트바디 성능")]
-    public float Speed = 1f; // 일반
-    public float ExSpeed = 2f; // 익시드
+    public float AccelSpeed = 1f; // 일반
+    public float ExAccellSpeed = 2f; // 익시드
+    public float MaxSpeed = 50f;
+    public float MaxExSpeed = 75f;
     public float rotateSpeed = 0.5f; // 회전 속도
     [Range (0f, 1f)] public float ExeedGauge = 0f;
     [Header ("게임 오브젝트")]
@@ -42,13 +44,9 @@ public class Move : MonoBehaviour
         //     rb.velocity = vel.normalized * Speed;
         // }
         if (v != 0f && !OnExeed) ExeedGauge += 0.001f;
-        if (OnExeed) rb.MovePosition(
-            transform.position + transform.forward * v * ExSpeed
-        );
+        if (OnExeed && NowSpeed < MaxExSpeed) rb.AddForce(Vector3.forward * v * ExAccellSpeed, ForceMode.Impulse);
         else {
-            rb.MovePosition(
-                transform.position + transform.forward * v * Speed
-            );
+            if (NowSpeed < MaxSpeed) rb.AddForce(Vector3.forward * v * AccelSpeed, ForceMode.Impulse); // 최고속도가 넘지 않는다면 가속
             if (ExeedGauge > 1f) ExeedGauge = 1f;
             else ExeedGaugeImage.fillAmount = ExeedGauge;
         }
