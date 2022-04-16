@@ -39,14 +39,10 @@ public class Move : MonoBehaviour
         Vector3 m_EulerAngleVelocity = new Vector3(0f, h * rotateSpeed, 0f);
         Quaternion deltaRotation = Quaternion.Euler(m_EulerAngleVelocity);
         rb.MoveRotation(rb.rotation * deltaRotation);
-        // Vector3 vel = rb.velocity;
-        // if (vel.magnitude < Speed) {
-        //     rb.velocity = vel.normalized * Speed;
-        // }
         if (v != 0f && !OnExeed) ExeedGauge += 0.001f;
-        if (OnExeed && NowSpeed < MaxExSpeed) rb.AddForce(Vector3.forward * v * ExAccellSpeed, ForceMode.Impulse);
+        if (OnExeed && NowSpeed < MaxExSpeed) rb.AddRelativeForce(Vector3.forward * v * ExAccellSpeed, ForceMode.Impulse);
         else {
-            if (NowSpeed < MaxSpeed) rb.AddForce(Vector3.forward * v * AccelSpeed, ForceMode.Impulse); // 최고속도가 넘지 않는다면 가속
+            if (NowSpeed < MaxSpeed) rb.AddRelativeForce(Vector3.forward * v * AccelSpeed, ForceMode.Impulse); // 최고속도가 넘지 않는다면 가속
             if (ExeedGauge > 1f) ExeedGauge = 1f;
             else ExeedGaugeImage.fillAmount = ExeedGauge;
         }
