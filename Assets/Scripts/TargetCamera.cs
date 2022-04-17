@@ -11,7 +11,7 @@ public class TargetCamera : MonoBehaviour
     void Update()
     {
         Rigidbody rb = Player.GetComponent<Rigidbody>();
-        Debug.Log(rb.rotation);
+        // Debug.Log(rb.rotation);
         Vector3 FixedPos = 
             new Vector3(
                 Player.transform.position.x + offset.x,
