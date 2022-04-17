@@ -9,11 +9,13 @@ public class Move : MonoBehaviour
 {
     [Header ("카트바디 성능")]
     public float AccelSpeed = 1f; // 일반
-    public float ExAccellSpeed = 2f; // 익시드
-    public float MaxSpeed = 50f;
-    public float MaxExSpeed = 75f;
+    public float MaxSpeed = 50f; // 일반 최고속도
+    public EXType ExeedType; // 익시드 타입
+    private float ExAccellSpeed = 1.5f; // 익시드
+    private float MaxExSpeed = 75f; // 익시드 최고속도
+    private float DelExeedSpeed = 0.001f;
+    [Range (0f, 1f)] public float ExeedGauge = 0f; // 시작시 모여있는 익시드
     public float rotateSpeed = 0.5f; // 회전 속도
-    [Range (0f, 1f)] public float ExeedGauge = 0f;
     [Header ("게임 오브젝트")]
     public Text SpeedText;
     public Image ExeedGaugeImage;
@@ -28,9 +30,26 @@ public class Move : MonoBehaviour
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
+        if (ExeedType == EXType.L) {
+            ExAccellSpeed = 1.5f;
+            MaxExSpeed = 75f;
+            DelExeedSpeed = 0.001f;
+        }
+        else if (ExeedType == EXType.B) {
+            ExAccellSpeed = 1.75f;
+            MaxExSpeed = 85f;
+            DelExeedSpeed = 0.0015f;
+        }
+        else {
+            ExAccellSpeed = 2f;
+            MaxExSpeed = 95f;
+            DelExeedSpeed = 0.002f;
+        }
     }
     private async void Update() {
+        rotateSpeed = 0.5f;
         if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.Space)) await Exeed();
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) rotateSpeed = 3f;
     }
     private void FixedUpdate() {
         float h = Input.GetAxis("Horizontal");
@@ -62,9 +81,12 @@ public class Move : MonoBehaviour
                 OnExeed = false;
                 return;
             }
-            ExeedGaugeImage.fillAmount -= 0.001f;
-            ExeedGauge -= 0.001f;
+            ExeedGaugeImage.fillAmount -= DelExeedSpeed;
+            ExeedGauge -= DelExeedSpeed;
             await Task.Delay(1);
         }
+    }
+    public enum EXType{
+	    L, B, S
     }
 }
