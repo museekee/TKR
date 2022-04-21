@@ -29,6 +29,7 @@ public class Booster : MonoBehaviour
         BoosterRect.sizeDelta = new Vector2(60f, 60f);
         BoosterRect.localScale = new Vector3(0.9f, 0.9f, 0.9f);
         BoosterRect.anchoredPosition = Vector3.zero;
+        BoosterRect.position = Vector3.zero;
         Image BoosterImg = Booster.AddComponent<Image>();
         BoosterImg.sprite = Resources.Load<Sprite>("Drawings/Booster");
         return Booster;

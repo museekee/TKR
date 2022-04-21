@@ -75,7 +75,9 @@ public class Move : MonoBehaviour
                         $"Booster{Param.NumOfBooster}",
                         GameObject.Find($"Booster{Param.NumOfBooster}Case")
                     );
-                    Booster.GetComponent<RectTransform>().position = Vector3.zero;
+                    Booster.transform.position = Vector3.zero;
+                    Booster.transform.localPosition = Vector3.zero;
+                    Debug.Log(Booster.transform.localPosition);
                     Booster.transform.SetParent(
                         GameObject.Find($"Booster{Param.NumOfBooster}Case")
                         .GetComponent<RectTransform>().transform
